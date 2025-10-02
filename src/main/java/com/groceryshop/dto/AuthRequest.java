@@ -10,7 +10,6 @@ import javax.validation.constraints.NotNull;
 @Data
 @AllArgsConstructor
 public class AuthRequest {
-    @NotNull
     private String phone;
 
     private String otp;
