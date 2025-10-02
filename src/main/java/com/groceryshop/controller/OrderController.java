@@ -1,14 +1,13 @@
 package com.groceryshop.controller;
 
 import com.groceryshop.dto.ApiResponse;
-import com.groceryshop.service.EmailService;
+import com.groceryshop.service.NotificationService;
 import com.groceryshop.service.FirestoreService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,7 +22,7 @@ public class OrderController {
     private FirestoreService firestoreService;
 
     @Autowired
-    private EmailService emailService;
+    private NotificationService notificationService;
 
     @GetMapping
     public ResponseEntity<ApiResponse<List<Map<String, Object>>>> getAllOrders(
@@ -81,7 +80,7 @@ public class OrderController {
             if (!admins.isEmpty()) {
                 String adminEmail = (String) admins.get(0).get("email");
                 String orderDetails = formatOrderDetails(orderData);
-                emailService.sendOrderNotification(adminEmail, orderDetails);
+                notificationService.sendOrderNotification(adminEmail, orderDetails);
             }
 
             return ResponseEntity.ok(ApiResponse.success("Order created successfully", orderData));
@@ -119,7 +118,7 @@ public class OrderController {
                 String customerEmail = (String) order.get("customerEmail");
                 String orderDetails = formatOrderDetails(updatedOrder);
                 String estimatedDelivery = deliveryTime != null ? deliveryTime : "2-3 hours";
-                emailService.sendOrderConfirmation(customerEmail, orderDetails, estimatedDelivery);
+                notificationService.sendOrderConfirmation(customerEmail, orderDetails, estimatedDelivery);
             }
 
             return ResponseEntity.ok(ApiResponse.success("Order status updated successfully", updatedOrder));
